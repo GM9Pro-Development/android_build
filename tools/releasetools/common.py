@@ -421,7 +421,12 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
   mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
 
-  cmd = [mkbootimg, "--kernel", os.path.join(sourcedir, "kernel")]
+  # use prebuilt kernel if Image.gz-dtb exists
+  kernel = os.getenv('OUT') + "/Image.gz-dtb"
+  if not os.path.exists(kernel):
+    kernel = "kernel"
+
+  cmd = [mkbootimg, "--kernel", os.path.join(sourcedir, kernel)]
 
   fn = os.path.join(sourcedir, "second")
   if os.access(fn, os.F_OK):
